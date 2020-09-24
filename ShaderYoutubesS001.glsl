@@ -60,3 +60,32 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     
     fragColor = vec4(col,1.0);
 }
+
+// Shader number 4
+
+void mainImage( out vec4 fragColor, in vec2 fragCoord )
+{
+    // Normalized pixel coordinates (from 0 to 1)
+    
+	vec2 uv = (fragCoord - .5 * iResolution.xy) /iResolution.y;
+	
+    
+    vec3 a = vec3(0., 1.0, 0.0);
+    vec3 b = vec3(1., 0., 0.0);
+    vec3 c = cross(b,a);
+    
+    float dotProduct = dot(a,b);
+    
+    vec3 col = vec3(uv.y * uv.x);
+   
+    
+   	col = vec3(dotProduct);
+    /*
+		col.r = dotProduct
+		
+	*/
+    
+    fragColor = vec4(col,1.0);
+}
+
+
