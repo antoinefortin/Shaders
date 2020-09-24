@@ -88,4 +88,47 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     fragColor = vec4(col,1.0);
 }
 
+// Shader number 5
+float sphere(vec3 pos, float radius)
+{
+	return length(pos) - radius;
+}
+
+float HowCloseAmIFromTheNearestObjectInScene(
+	vec3 pos
+)
+{
+    
+    
+	return sphere(pos, 1.0);
+}
+
+void mainImage( out vec4 fragColor, in vec2 fragCoord )
+{
+    // Normalized pixel coordinates (from 0 to 1)
+    
+	vec2 uv = (fragCoord - .5 * iResolution.xy) /iResolution.y;
+
+   	vec3 ro =  vec3(0.0, 0.0, -4.0);
+     
+    
+    vec3 rd = normalize(vec3(uv.x, uv.y, 1.0));
+   	vec3 col = vec3(rd);
+  	
+    vec3 currentRayPos = vec3(0.0,0.0,0.0f);
+   	
+    // Here we are walking along the ray
+    for(int i = 0; i < 128; i++)
+    {
+    	float _distance = HowCloseAmIFromTheNearestObjectInScene(ro);
+      	if(_distance < 0.01)
+        {
+            col = vec3(1.0);
+        	break;    
+        }
+        ro += rd * _distance; 
+      
+    }
+    fragColor = vec4(col,1.0);
+}
 
