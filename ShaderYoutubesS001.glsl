@@ -132,3 +132,70 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     fragColor = vec4(col,1.0);
 }
 
+
+float sphere(vec3 pos, float radius)
+{
+	return length(pos) - radius;
+}
+float plane(vec3 pos)
+{
+	return pos.y;
+}
+
+
+
+float HowCloseAmIFromTheNearestObjectInScene(
+	vec3 pos
+)
+{	
+
+    /*
+
+
+	pos.x = mod(pos.x+ 2., 4.) -2.;
+    pos.z = mod(pos.z+ 2., 4.) -2.;
+*/
+    
+    vec3 spherePositionOffset = vec3(1.0 + cos(iTime), -1.0 + sin(iTime), 0.0);
+   
+    float radius = .5;
+    float plane = plane(pos);
+    float sphereDistance = sphere(pos + spherePositionOffset, radius); 
+	
+            
+	return min(plane, sphereDistance);
+}
+
+
+// Basic ray marching
+void mainImage( out vec4 fragColor, in vec2 fragCoord )
+{
+    // Normalized pixel coordinates (from 0 to 1)
+    
+	vec2 uv = (fragCoord - .5 * iResolution.xy) /iResolution.y;
+
+   	vec3 ro =  vec3(0.0, 1.25, -5.0 /*+ sin(iTime)*/);
+     
+    
+    vec3 rd = normalize(vec3(uv.x, uv.y, 1.0));
+   	vec3 col = vec3(rd);
+  	   	
+    // Here we are walking along the ray
+    for(int i = 0; i < 128; i++)
+    {
+    	float _distance = HowCloseAmIFromTheNearestObjectInScene(ro);
+      	if(_distance < 0.01)
+        {
+            
+            vec3 lp = vec3(1., 3., 5.);
+          	vec3 pShade =  normalize(ro - _distance);
+            
+            vec3 shaded = vec3(dot(lp, pShade));
+            col = vec3(shaded + .5);
+        	break;    
+        }
+        ro += rd * _distance; 
+      
+    }
+    fragColor = vec4(col,1.0);
+}
